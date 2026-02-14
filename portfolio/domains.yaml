@@ -1,14 +1,47 @@
 # ============================================================
-# YARLIS PORTFOLIO - DOMAIN REGISTRY
+# YARLIS PORTFOLIO - MASTER INDEX
 # ============================================================
-# This file tracks all domains in the Yarlis ecosystem
-# Quick access to all staging and production URLs
-# Updated: 2026-02-14
+# The complete registry of Yarlis ecosystem products
+# One file to rule them all 🦊
 # ============================================================
 
-version: "1.1"
+version: "2.0"
 updated: "2026-02-14"
 owner: "SamJr"
+
+# ============================================================
+# PORTFOLIO OVERVIEW
+# ============================================================
+portfolio:
+  name: "Yarlis"
+  tagline: "AI Automation Made Simple"
+  
+  mission: |
+    To transform complexity into clarity and empower others to build,
+    deploy, and scale ideas without gatekeepers.
+  
+  vision: |
+    To build enduring, AI-first platforms that compound value, create
+    leverage, and buy back time—while remaining sovereign in thought,
+    capital, and execution.
+  
+  values:
+    - name: Ship Fast
+      description: Velocity over perfection. Iterate in public.
+    - name: Own Everything
+      description: Build to own, not to service.
+    - name: Automate First
+      description: Systems over manual effort.
+    - name: Stay Sovereign
+      description: No vendor lock-in, multi-cloud by design.
+  
+  north_star_metrics:
+    - "Net New MRR"
+    - "Activation Rate"
+    - "Time to Value"
+  
+  founder: "Siri (Sireesh Yarlagadda)"
+  ai_ceo: "SamJr 🦊"
 
 # ============================================================
 # QUICK ACCESS - ALL URLs
@@ -35,7 +68,7 @@ quick_access:
       status: "🔄 Coming Soon"
 
   staging:
-    - name: Yarlis.com
+    - name: Yarlis.com (Manus-style)
       url: https://yarlis-com-staging.web.app
       status: "✅ Live"
     - name: Yarlis.ai (Mission Control)
@@ -60,90 +93,366 @@ quick_access:
   npm:
     - name: "@sdods/core"
       url: https://npmjs.com/package/@sdods/core
+      version: "0.1.0"
     - name: "@sdods/auth"
       url: https://npmjs.com/package/@sdods/auth
+      version: "0.1.0"
     - name: "@sdods/ui"
       url: https://npmjs.com/package/@sdods/ui
+      version: "0.1.0"
     - name: "@sdods/observability"
       url: https://npmjs.com/package/@sdods/observability
+      version: "0.1.0"
 
   repos:
     - name: yarlis-platform
       url: https://github.com/siri1410/yarlis-platform
+      description: Monorepo for yarlis.com, yarlis.ai, yarlis.io
     - name: ystudio (MyBotBox)
       url: https://github.com/siri1410/ystudio
+      description: MyBotBox chatbot builder
     - name: smartrapidtriage
       url: https://github.com/siri1410/smartrapidtriage
+      description: AI triage platform
     - name: sdods
       url: https://github.com/siri1410/sdods
+      description: Open-source component library
     - name: yarlis-portfolio
       url: https://github.com/siri1410/yarlis-portfolio
+      description: This portfolio index
 
 # ============================================================
-# DETAILED DOMAIN REGISTRY
+# TECH STACK OVERVIEW
 # ============================================================
-domains:
+tech_stack:
+  frontend:
+    framework: "Next.js 15 (App Router)"
+    styling: "Tailwind CSS v4"
+    state: "Zustand"
+    ui_library: "@sdods/ui, shadcn/ui"
+    drag_drop: "@dnd-kit/core"
+  
+  backend:
+    runtime: "Node.js / Bun"
+    framework: "NestJS (services), Next.js API Routes"
+    orm: "Drizzle ORM"
+    validation: "Zod"
+  
+  database:
+    primary: "PostgreSQL (Cloud SQL)"
+    realtime: "Firestore"
+    cache: "Redis (planned)"
+  
+  ai:
+    orchestration: "LangChain"
+    models:
+      - "OpenAI GPT-4o"
+      - "Anthropic Claude 3.5"
+      - "Ollama (local)"
+    agents: "OpenClaw, Custom"
+  
+  infrastructure:
+    cloud: "Google Cloud Platform"
+    compute: "Cloud Run (serverless)"
+    hosting: "Firebase Hosting"
+    cdn: "Cloudflare"
+    dns: "AWS Route 53"
+  
+  auth:
+    provider: "Firebase Auth"
+    sso: "Auth0 (enterprise)"
+    rbac: "@sdods/auth"
+  
+  payments:
+    provider: "Stripe"
+    features: ["Subscriptions", "Usage-based", "Invoicing"]
+  
+  devops:
+    ci_cd: "GitHub Actions"
+    containers: "Docker"
+    iac: "Terraform (planned)"
+    monitoring: "OpenTelemetry, @sdods/observability"
+
+# ============================================================
+# DETAILED PRODUCT REGISTRY
+# ============================================================
+products:
   # ============================================================
-  # PARENT COMPANY
+  # YARLIS.COM - PARENT PLATFORM
   # ============================================================
-  - domain: yarlis.com
-    product: Yarlis Core
-    description: Parent holding company, brand, enterprise AI services
-    repo: https://github.com/siri1410/yarlis-platform
+  - id: yarlis-core
+    domain: yarlis.com
+    name: "Yarlis"
+    tagline: "AI Automation Made Simple"
     status: build
-    category: platform
-    monetization: subscription
-    moat: brand, distribution, customer_data
-    stack:
-      - Next.js 15
-      - Firebase
-      - Stripe
+    priority: P0
+    
+    description: |
+      The mothership. Parent holding company platform providing brand identity,
+      enterprise AI services, cross-product gateway, and unified auth.
+    
+    value_proposition: |
+      One platform to automate anything with AI. No coding required.
+      Connect your tools, describe what you want, and let AI do the rest.
+    
+    problem: |
+      AI is powerful but fragmented. Users juggle multiple tools, complex
+      integrations, and need technical expertise to build automation.
+    
+    solution: |
+      Unified AI automation platform with natural language interface,
+      pre-built integrations, and one-click deployment.
+    
+    ideal_customer:
+      - SMB owners seeking AI automation
+      - Developers building AI applications
+      - Enterprise teams needing workflow automation
+    
+    capabilities:
+      - Manus-style chat interface
+      - Multi-agent task execution
+      - Tool/connector marketplace
+      - Project management
+      - Template library
+    
+    moat:
+      - Brand recognition in AI automation
+      - Cross-sell across product ecosystem
+      - Customer data and relationships
+      - Network effects from templates
+    
+    pricing:
+      model: freemium
+      tiers:
+        - name: Free
+          price: 0
+          limits: "3 tasks/day"
+        - name: Pro
+          price: 29
+          period: monthly
+          limits: "Unlimited tasks, 5 agents"
+        - name: Team
+          price: 99
+          period: monthly
+          limits: "Unlimited, 10 users, priority support"
+        - name: Enterprise
+          price: custom
+          limits: "Custom, SLA, on-premise option"
+    
+    tech_stack:
+      frontend: ["Next.js 15", "Tailwind CSS 4", "Zustand"]
+      backend: ["API Routes", "Firebase Functions"]
+      database: ["Firestore"]
+      ai: ["OpenAI", "Anthropic", "LangChain"]
+      payments: ["Stripe"]
+    
     urls:
       production: https://yarlis.com
       staging: https://yarlis-com-staging.web.app
       landing: https://yarlis-platform.web.app
       docs: https://docs.yarlis.com
       console: https://console.firebase.google.com/project/yarlis-platform
+    
+    metrics:
+      north_star: "Monthly Active Users"
+      kpis:
+        - "Tasks completed"
+        - "Conversion rate (free → paid)"
+        - "Net Promoter Score"
+        - "Time to first value"
+    
+    roadmap:
+      q1_2026:
+        - "MVP launch with chat interface"
+        - "Telegram connector"
+        - "Basic templates"
+      q2_2026:
+        - "Stripe billing"
+        - "Team collaboration"
+        - "API access"
 
   # ============================================================
-  # AI PLATFORM
+  # YARLIS.AI - MISSION CONTROL
   # ============================================================
-  - domain: yarlis.ai
-    product: Yarlis AI
-    description: AI-first SaaS layer, agentic systems, model abstraction
-    repo: https://github.com/siri1410/yarlis-platform
+  - id: yarlis-ai
+    domain: yarlis.ai
+    name: "Yarlis AI"
+    tagline: "AI Agent Orchestration Platform"
     status: beta
-    category: ai
-    monetization: enterprise
-    moat: workflows, integrations, agent_orchestration
-    stack:
-      - Next.js 15
-      - LangChain
-      - Firebase
-      - Cloud Run
+    priority: P0
+    
+    description: |
+      Enterprise AI control plane. Manage AI agents, orchestrate workflows,
+      and monitor automation across your organization.
+    
+    value_proposition: |
+      Command center for AI operations. See everything, control everything,
+      automate everything—from one dashboard.
+    
+    problem: |
+      Managing multiple AI agents, models, and workflows is chaotic.
+      No visibility into what agents are doing or how to coordinate them.
+    
+    solution: |
+      Mission Control dashboard with real-time agent monitoring,
+      task management, and multi-model orchestration.
+    
+    ideal_customer:
+      - Enterprise IT teams
+      - DevOps/SRE teams
+      - AI/ML platform engineers
+      - Operations managers
+    
+    capabilities:
+      - Mission Control dashboard (20+ pages)
+      - Drag-drop Kanban task board
+      - Real-time activity feed
+      - Multi-agent management
+      - Memory/context persistence
+      - Calendar integration
+      - Document library
+      - Team collaboration
+    
+    agents:
+      - name: SamJr 🦊
+        role: "Chief of Execution"
+        model: "claude-opus-4-5"
+      - name: Dolly 🎀
+        role: "QA Lead"
+        model: "claude-opus-4-5"
+      - name: Nick 💻
+        role: "Senior Developer"
+        model: "claude-sonnet-4-5"
+      - name: Roopa 🧪
+        role: "QA Engineer"
+        model: "claude-sonnet-4-5"
+    
+    moat:
+      - Packaged workflows save months of setup
+      - Multi-model abstraction prevents vendor lock-in
+      - Integration ecosystem creates stickiness
+      - Proprietary agent coordination protocol
+    
+    pricing:
+      model: enterprise
+      tiers:
+        - name: Team
+          price: 99
+          period: monthly
+          users: 5
+        - name: Business
+          price: 499
+          period: monthly
+          users: 25
+        - name: Enterprise
+          price: custom
+          features: "Unlimited, SLA, dedicated support"
+    
+    tech_stack:
+      frontend: ["Next.js 15", "Tailwind CSS 4", "@dnd-kit/core", "Zustand"]
+      backend: ["NestJS", "Cloud Run"]
+      database: ["Firestore", "PostgreSQL"]
+      ai: ["LangChain", "OpenAI", "Anthropic", "Ollama"]
+      realtime: ["WebSockets", "Server-Sent Events"]
+    
     urls:
       production: https://yarlis.ai
       staging: https://yarlis-ai-staging.web.app
       mission_control: https://yarlis-ai-staging.web.app/mission-control
+      tasks: https://yarlis-ai-staging.web.app/mission-control/tasks
       docs: https://docs.yarlis.ai
       console: https://console.firebase.google.com/project/yarlis-platform
+    
+    features_shipped:
+      - "✅ Mission Control dashboard"
+      - "✅ Drag-drop Kanban board"
+      - "✅ Activity feed"
+      - "✅ Agent profiles"
+      - "✅ Help documentation"
+      - "✅ Calendar view"
+      - "✅ Content library"
+    
+    metrics:
+      north_star: "Tasks Automated per Week"
+      kpis:
+        - "Agent uptime"
+        - "Task completion rate"
+        - "Time saved (hours)"
+        - "User engagement"
 
   # ============================================================
-  # NO-CODE CHATBOT BUILDER
+  # MYBOTBOX - CHATBOT BUILDER
   # ============================================================
-  - domain: mybotbox.com
-    product: MyBotBox
-    description: No-code AI chatbot builder, multi-tenant SaaS
-    repo: https://github.com/siri1410/ystudio
+  - id: mybotbox
+    domain: mybotbox.com
+    name: "MyBotBox"
+    tagline: "No-Code AI Chatbot Builder"
     status: maintenance
-    category: product
-    monetization: saas
-    moat: templates, multi_tenant, workflow_lockin
-    stack:
-      - Next.js 15
-      - Firebase
-      - LangChain
-      - n8n-style engine
+    priority: P1
+    
+    description: |
+      Enterprise-grade chatbot infrastructure with visual builder.
+      Like n8n/Zapier but for conversational AI.
+    
+    value_proposition: |
+      Build powerful AI chatbots in minutes, not months.
+      No coding required. Deploy anywhere.
+    
+    problem: |
+      Building chatbots requires coding skills and months of development.
+      Existing tools are either too simple or too complex.
+    
+    solution: |
+      Visual chatbot builder with AI-powered responses, multi-channel
+      deployment, and enterprise-grade infrastructure.
+    
+    ideal_customer:
+      - Marketing teams
+      - Customer support leaders
+      - SMB owners
+      - Digital agencies
+    
+    capabilities:
+      - Visual flow builder
+      - AI-powered responses
+      - Multi-channel deploy (web, WhatsApp, Telegram, Slack)
+      - Template marketplace
+      - Analytics dashboard
+      - Team collaboration
+      - White-label option
+    
+    moat:
+      - Template marketplace creates network effects
+      - Multi-tenant infrastructure is capital-intensive to replicate
+      - Workflow lock-in increases switching costs
+      - AI training data compounds over time
+    
+    pricing:
+      model: saas
+      tiers:
+        - name: Starter
+          price: 29
+          period: monthly
+          limits: "1 bot, 1K messages"
+        - name: Pro
+          price: 79
+          period: monthly
+          limits: "5 bots, 10K messages"
+        - name: Business
+          price: 199
+          period: monthly
+          limits: "Unlimited bots, 100K messages"
+        - name: Enterprise
+          price: custom
+          limits: "Custom, white-label, SLA"
+    
+    tech_stack:
+      frontend: ["Next.js 15", "Tailwind CSS", "React Flow"]
+      backend: ["Firebase Functions", "Cloud Run"]
+      database: ["Firestore", "PostgreSQL"]
+      ai: ["LangChain", "OpenAI", "Anthropic"]
+      messaging: ["Twilio", "WhatsApp API", "Telegram API"]
+    
     urls:
       production: https://mybotbox.com
       firebase: https://mybotbox-prod.web.app
@@ -153,27 +462,213 @@ domains:
       pricing: https://mybotbox.com/pricing
       console: https://console.firebase.google.com/project/mybotbox-prod
       cloud_run: https://console.cloud.google.com/run/detail/us-central1/mybotbox-app/metrics?project=mybotbox-prod
+    
+    metrics:
+      north_star: "Bots Deployed"
+      kpis:
+        - "Messages sent"
+        - "MRR"
+        - "Churn rate"
+        - "Template usage"
 
   # ============================================================
-  # DEVELOPER FRAMEWORK
+  # RAPIDTRIAGE.ME - AI TRIAGE
   # ============================================================
-  - domain: sdods.com
-    product: SDODS
-    description: Developer framework ecosystem, reusable OSS components
-    repo: https://github.com/siri1410/sdods
+  - id: smartrapidtriage
+    domain: rapidtriage.me
+    name: "SmartRapidTriage"
+    tagline: "AI-Powered Rapid Triage"
+    status: live
+    priority: P1
+    
+    description: |
+      AI triage platform for IT, software, healthcare, and emergency
+      prioritization. Intelligent routing with continuous learning.
+    
+    value_proposition: |
+      Cut triage time by 80%. AI-powered prioritization that learns
+      from every decision and gets smarter over time.
+    
+    problem: |
+      Manual triage is slow, inconsistent, and doesn't scale.
+      Critical issues get buried. Teams waste time on low-priority items.
+    
+    solution: |
+      AI-powered triage that automatically categorizes, prioritizes,
+      and routes issues to the right person or team.
+    
+    ideal_customer:
+      - IT support teams
+      - Software development teams
+      - Healthcare providers
+      - Emergency services
+    
+    capabilities:
+      - AI-powered categorization
+      - Priority scoring
+      - Intelligent routing
+      - SLA monitoring
+      - Browser automation (Playwright)
+      - Chrome extension
+      - Learning from feedback
+    
+    use_cases:
+      - IT ticket triage
+      - Bug prioritization
+      - Symptom assessment
+      - Emergency routing
+      - Support ticket classification
+    
+    moat:
+      - Domain-specific training data
+      - Workflow integration lock-in
+      - Continuous learning improves accuracy
+      - Compliance certifications (planned)
+    
+    pricing:
+      model: per_seat
+      tiers:
+        - name: Team
+          price: 15
+          period: monthly
+          per: user
+          limits: "Basic AI, email support"
+        - name: Business
+          price: 35
+          period: monthly
+          per: user
+          limits: "Advanced AI, integrations, priority support"
+        - name: Enterprise
+          price: custom
+          limits: "Custom models, SLA, dedicated CSM"
+    
+    tech_stack:
+      frontend: ["Next.js 15", "Tailwind CSS"]
+      backend: ["Firebase Functions", "Cloud Run"]
+      database: ["Firestore"]
+      ai: ["LangChain", "Custom models", "OpenAI"]
+      automation: ["Playwright", "Chrome Extension"]
+    
+    urls:
+      production: https://rapidtriage.me
+      staging: https://rapidtriage-me.web.app
+      health: https://rapidtriage.me/api/health
+      console: https://console.firebase.google.com/project/rapidtriage-me
+    
+    metrics:
+      north_star: "Issues Triaged per Day"
+      kpis:
+        - "Accuracy rate"
+        - "Time to triage"
+        - "User adoption"
+        - "False positive rate"
+
+  # ============================================================
+  # YARLIS.IO - INFRASTRUCTURE
+  # ============================================================
+  - id: yarlis-io
+    domain: yarlis.io
+    name: "Yarlis IO"
+    tagline: "Infrastructure Control Plane"
+    status: beta
+    priority: P2
+    
+    description: |
+      Internal infrastructure monitoring and health dashboard.
+      Single pane of glass for all Yarlis services.
+    
+    value_proposition: |
+      Know the health of every service at a glance.
+      Proactive monitoring before users notice issues.
+    
+    capabilities:
+      - Health dashboard for all products
+      - Uptime monitoring
+      - SSL certificate tracking
+      - Service status indicators
+      - Quick links to consoles
+    
+    tech_stack:
+      frontend: ["Next.js 15", "Static Export"]
+      monitoring: ["Custom health checks", "CORS-safe fetches"]
+    
+    urls:
+      production: https://yarlis.io
+      staging: https://yarlis-io-staging.web.app
+      health_dashboard: https://yarlis-io-staging.web.app
+      console: https://console.firebase.google.com/project/yarlis-platform
+    
+    endpoints_monitored:
+      - name: MyBotBox
+        url: https://mybotbox-prod.web.app
+      - name: RapidTriage
+        url: https://rapidtriage.me/api/health
+      - name: Yarlis.ai
+        url: https://yarlis-ai-staging.web.app
+      - name: Yarlis.com
+        url: https://yarlis-com-staging.web.app
+
+  # ============================================================
+  # SDODS - DEVELOPER FRAMEWORK
+  # ============================================================
+  - id: sdods
+    domain: sdods.com
+    name: "SDODS"
+    tagline: "Software Development & Operations Data Systems"
     status: published
-    category: platform
-    monetization: open_core
-    moat: ecosystem_gravity, developer_community
-    stack:
-      - TypeScript
-      - React
-      - NestJS
-    modules:
-      - "@sdods/core"
-      - "@sdods/auth"
-      - "@sdods/ui"
-      - "@sdods/observability"
+    priority: P2
+    
+    description: |
+      Open-source developer framework with reusable components.
+      The building blocks that power the Yarlis ecosystem.
+    
+    value_proposition: |
+      Stop reinventing the wheel. Production-ready components
+      for auth, UI, observability, and more.
+    
+    packages:
+      - name: "@sdods/core"
+        description: "Utilities, Result type, retry, debounce"
+        npm: https://npmjs.com/package/@sdods/core
+        version: "0.1.0"
+      - name: "@sdods/auth"
+        description: "Provider-agnostic auth with Firebase adapter"
+        npm: https://npmjs.com/package/@sdods/auth
+        version: "0.1.0"
+      - name: "@sdods/ui"
+        description: "React components: Button, Card, Input, ThemeProvider"
+        npm: https://npmjs.com/package/@sdods/ui
+        version: "0.1.0"
+      - name: "@sdods/observability"
+        description: "Logger, Tracer, Metrics with OpenTelemetry"
+        npm: https://npmjs.com/package/@sdods/observability
+        version: "0.1.0"
+    
+    moat:
+      - Ecosystem gravity (used across all Yarlis products)
+      - Developer community contributions
+      - First-mover in integrated AI-ops components
+    
+    pricing:
+      model: open_core
+      tiers:
+        - name: Open Source
+          price: 0
+          limits: "Core packages, community support"
+        - name: Pro
+          price: 49
+          period: monthly
+          limits: "Premium components, priority support"
+        - name: Enterprise
+          price: custom
+          limits: "Custom components, SLA, training"
+    
+    tech_stack:
+      languages: ["TypeScript"]
+      build: ["Turborepo", "tsup"]
+      testing: ["Vitest"]
+      docs: ["TypeDoc"]
+    
     urls:
       production: https://sdods.com
       npm_org: https://npmjs.com/org/sdods
@@ -182,46 +677,64 @@ domains:
       npm_ui: https://npmjs.com/package/@sdods/ui
       npm_observability: https://npmjs.com/package/@sdods/observability
       github: https://github.com/siri1410/sdods
+    
+    security:
+      review_schedule: "Quarterly (Feb, May, Aug, Nov)"
+      next_review: "2026-05-01"
+      policy: "Alert only for official CVEs/advisories"
 
-  # ============================================================
-  # INFRASTRUCTURE CONTROL PLANE
-  # ============================================================
-  - domain: yarlis.io
-    product: Yarlis IO
-    description: Infrastructure control plane, health monitoring dashboard
-    repo: https://github.com/siri1410/yarlis-platform
-    status: beta
-    category: infrastructure
-    monetization: internal
-    moat: speed, platform_primitives
-    stack:
-      - Next.js 15
-      - Static Export
-      - Health Checks
-    urls:
-      production: https://yarlis.io
-      staging: https://yarlis-io-staging.web.app
-      health_dashboard: https://yarlis-io-staging.web.app
-      console: https://console.firebase.google.com/project/yarlis-platform
+# ============================================================
+# TEAM
+# ============================================================
+team:
+  humans:
+    - name: "Siri (Sireesh Yarlagadda)"
+      role: "Founder & CEO"
+      focus: "Vision, strategy, decisions"
+  
+  agents:
+    - name: "SamJr 🦊"
+      role: "Chief of Execution AI"
+      model: "claude-opus-4-5"
+      focus: "Development, shipping, coordination"
+    
+    - name: "Dolly 🎀"
+      role: "QA Lead"
+      model: "claude-opus-4-5"
+      focus: "E2E testing, bug tracking, quality gates"
+    
+    - name: "Nick 💻"
+      role: "Senior Developer"
+      model: "claude-sonnet-4-5"
+      focus: "Feature implementation, code reviews"
+    
+    - name: "Roopa 🧪"
+      role: "QA Engineer"
+      model: "claude-sonnet-4-5"
+      focus: "Test execution, regression testing"
 
-  # ============================================================
-  # AI TRIAGE PLATFORM
-  # ============================================================
-  - domain: rapidtriage.me
-    product: SmartRapidTriage
-    description: IT/Software/Healthcare AI triage and prioritization
-    repo: https://github.com/siri1410/smartrapidtriage
-    status: live
-    category: healthcare
-    monetization: per_seat
-    moat: workflow_lockin, data_flywheel
-    stack:
-      - Next.js 15
-      - Firebase
-      - LangChain
-      - Playwright
-    urls:
-      production: https://rapidtriage.me
-      staging: https://rapidtriage-me.web.app
-      health: https://rapidtriage.me/api/health
-      console: https://console.firebase.google.com/project/rapidtriage-me
+# ============================================================
+# INFRASTRUCTURE
+# ============================================================
+infrastructure:
+  gcp_projects:
+    - name: yarlis-platform
+      products: ["yarlis.com", "yarlis.ai", "yarlis.io"]
+    - name: mybotbox-prod
+      products: ["mybotbox.com"]
+    - name: rapidtriage-me
+      products: ["rapidtriage.me"]
+  
+  dns:
+    provider: "AWS Route 53"
+    domains:
+      - yarlis.com
+      - yarlis.ai
+      - yarlis.io
+      - mybotbox.com
+      - rapidtriage.me
+      - sdods.com
+  
+  secrets:
+    manager: "Google Secret Manager"
+    rotation: "Quarterly"
