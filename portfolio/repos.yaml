@@ -1,0 +1,178 @@
+# ============================================================
+# YARLIS PORTFOLIO - REPOSITORY INDEX
+# ============================================================
+# Central index of all repositories in the Yarlis ecosystem
+# ============================================================
+
+version: "1.0"
+updated: "2026-02-14"
+owner: "SamJr"
+
+# ============================================================
+# REPOSITORY CATEGORIES
+# ============================================================
+
+categories:
+  - id: monorepo
+    name: Monorepo
+    description: Main platform codebase
+  - id: product
+    name: Product
+    description: Individual product repositories
+  - id: platform
+    name: Platform
+    description: Shared infrastructure and modules
+  - id: portfolio
+    name: Portfolio
+    description: Meta and governance repos
+
+# ============================================================
+# REPOSITORIES
+# ============================================================
+
+repositories:
+  # ============================================================
+  # MONOREPO
+  # ============================================================
+  - name: yarlis-platform
+    url: https://github.com/siri1410/yarlis-platform
+    category: monorepo
+    visibility: private
+    description: Main monorepo containing yarlis.com, yarlis.ai, sdods apps
+    products:
+      - yarlis.com
+      - yarlis.ai
+      - yarlis.io
+      - sdods.com
+    tech_stack:
+      - TypeScript
+      - Next.js 15
+      - Turborepo
+      - pnpm
+    structure:
+      apps:
+        - yarlis-ai
+        - yarlis-com
+        - mybotbox
+        - sdods
+        - yarlis-io
+        - admin
+        - mobile
+      packages:
+        - ui
+        - auth
+        - testing
+        - observability
+        - billing
+        - rbac
+        - ai-core
+        - workflows
+        - messaging
+        - analytics
+    ci_cd:
+      - lint
+      - typecheck
+      - test
+      - build
+      - deploy-staging
+      - deploy-prod
+    branch_protection: true
+    codeowners: true
+
+  # ============================================================
+  # PRODUCT REPOS
+  # ============================================================
+  - name: ystudio
+    url: https://github.com/siri1410/ystudio
+    category: product
+    visibility: private
+    description: MyBotBox - No-code AI chatbot builder
+    products:
+      - mybotbox.com
+    tech_stack:
+      - TypeScript
+      - Next.js
+      - Firebase
+    branch_protection: true
+
+  - name: smartrapidtriage
+    url: https://github.com/siri1410/smartrapidtriage
+    category: product
+    visibility: private
+    description: SmartRapidTriage - AI triage platform
+    products:
+      - rapidtriage.me
+    tech_stack:
+      - TypeScript
+      - Next.js
+      - Firebase
+      - Playwright
+    branch_protection: true
+
+  - name: uip
+    url: https://github.com/siri1410/uip
+    category: platform
+    visibility: private
+    description: Unified Identity Platform - Multi-tenant auth
+    tech_stack:
+      - TypeScript
+      - NestJS
+      - Prisma
+      - PostgreSQL
+    features:
+      - Multi-tenant auth
+      - RBAC
+      - Auth0 integration
+    branch_protection: true
+
+  # ============================================================
+  # PLATFORM REPOS (SDODS)
+  # ============================================================
+  - name: sdods
+    url: https://github.com/siri1410/sdods
+    category: platform
+    visibility: public
+    description: SDODS - Software Development & Operations Data Systems
+    license: MIT
+    modules:
+      - "@sdods/auth"
+      - "@sdods/rbac"
+      - "@sdods/ui"
+      - "@sdods/observability"
+      - "@sdods/billing"
+    status: planned
+
+  # ============================================================
+  # PORTFOLIO & GOVERNANCE
+  # ============================================================
+  - name: yarlis-portfolio
+    url: https://github.com/siri1410/yarlis-portfolio
+    category: portfolio
+    visibility: public
+    description: Portfolio index, governance, and templates
+    contents:
+      - Domain registry
+      - Product registry
+      - Repo index
+      - Templates
+      - Standards docs
+
+# ============================================================
+# REPO CREATION CHECKLIST
+# ============================================================
+
+repo_checklist:
+  - step: Check naming convention
+    details: "Use {domain-slug} for products, sdods-{module} for platform"
+  - step: Create from template
+    details: "Copy templates/product-repo-template.md"
+  - step: Add to repos.yaml
+    details: "Update this file with new repo details"
+  - step: Set up CI/CD
+    details: "Copy .github/workflows from template"
+  - step: Configure branch protection
+    details: "Require PR reviews, status checks"
+  - step: Add CODEOWNERS
+    details: "Define code ownership rules"
+  - step: Update portfolio README
+    details: "Add to main portfolio table"

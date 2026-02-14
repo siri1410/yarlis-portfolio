@@ -1,0 +1,247 @@
+# ============================================================
+# YARLIS PORTFOLIO - PRODUCT REGISTRY
+# ============================================================
+# Detailed product information for each portfolio item
+# ============================================================
+
+version: "1.0"
+updated: "2026-02-14"
+owner: "SamJr"
+
+products:
+  # ============================================================
+  # YARLIS CORE
+  # ============================================================
+  - id: yarlis-core
+    name: Yarlis Core
+    domain: yarlis.com
+    tagline: "AI Automation Made Simple"
+    
+    description: |
+      Parent holding company platform providing brand, enterprise AI services,
+      cross-product gateway, and admin + auth control plane.
+    
+    ideal_customer:
+      - SMB owners seeking AI automation
+      - Developers building AI applications
+      - Enterprise teams needing chatbot solutions
+    
+    problem_statement: |
+      AI is powerful but fragmented. Users need multiple tools, complex
+      integrations, and technical expertise to build AI automation.
+    
+    moat_hypothesis:
+      - Brand recognition in AI automation space
+      - Cross-sell across product ecosystem
+      - Customer data and relationships
+    
+    mvp_scope:
+      - Chat assistant with freemium model
+      - 3 free prompts, $10/month unlimited
+      - Messaging app integrations
+    
+    pricing:
+      model: subscription
+      tiers:
+        - name: Free
+          price: 0
+          features: ["3 prompts"]
+        - name: Pro
+          price: 10
+          period: monthly
+          features: ["Unlimited prompts", "Messaging integration", "API access"]
+        - name: Enterprise
+          price: custom
+          features: ["Multi-user", "SLA", "On-premise option"]
+    
+    key_workflows:
+      - User asks question → GPT response
+      - Upgrade flow → Stripe checkout
+      - Connect messaging app → OAuth flow
+    
+    tech_stack:
+      frontend: Next.js 15, React 19, Tailwind CSS 4
+      backend: API Routes, Firebase Functions
+      database: Firestore
+      ai: OpenAI GPT-3.5-turbo
+      payments: Stripe
+    
+    metrics:
+      north_star: Monthly Active Users
+      key_metrics:
+        - Prompt count
+        - Conversion rate (free → paid)
+        - Churn rate
+        - Revenue per user
+    
+    security:
+      - Firebase Auth
+      - HTTPS everywhere
+      - No PII in logs
+    
+    compliance:
+      - GDPR (planned)
+      - SOC2 (roadmap)
+
+  # ============================================================
+  # YARLIS AI
+  # ============================================================
+  - id: yarlis-ai
+    name: Yarlis AI
+    domain: yarlis.ai
+    tagline: "AI Agent Orchestration Platform"
+    
+    description: |
+      AI-first SaaS layer providing agentic systems, AI orchestration,
+      and model abstraction layer for enterprise automation.
+    
+    ideal_customer:
+      - Enterprise IT teams
+      - DevOps/SRE teams
+      - AI/ML engineers
+    
+    problem_statement: |
+      Managing multiple AI agents, models, and workflows is complex.
+      Teams need a unified platform to orchestrate AI at scale.
+    
+    moat_hypothesis:
+      - Packaged workflows save setup time
+      - Multi-model abstraction prevents vendor lock-in
+      - Integration ecosystem creates stickiness
+    
+    mvp_scope:
+      - Mission Control dashboard
+      - Agent management (SamJr, Dolly, Nick, Roopa)
+      - Task kanban with drag-drop
+      - Real-time activity monitoring
+    
+    pricing:
+      model: enterprise
+      tiers:
+        - name: Team
+          price: 99
+          period: monthly
+          users: 5
+        - name: Business
+          price: 499
+          period: monthly
+          users: 25
+        - name: Enterprise
+          price: custom
+    
+    tech_stack:
+      frontend: Next.js 15, Tailwind CSS 4, @dnd-kit
+      backend: NestJS, Cloud Run
+      database: Firestore, PostgreSQL
+      ai: LangChain, OpenAI, Anthropic, Ollama
+      state: Zustand
+    
+    features:
+      - Multi-agent orchestration
+      - Real-time activity feed
+      - Kanban task management
+      - Memory and context persistence
+      - Multi-model support
+
+  # ============================================================
+  # MYBOTBOX
+  # ============================================================
+  - id: mybotbox
+    name: MyBotBox
+    domain: mybotbox.com
+    tagline: "No-Code AI Chatbot Builder"
+    
+    description: |
+      Enterprise-grade chatbot infrastructure with visual builder,
+      multi-tenant SaaS model, like n8n/Zapier for chatbots.
+    
+    ideal_customer:
+      - Marketing teams
+      - Customer support leaders
+      - SMB owners
+    
+    problem_statement: |
+      Building chatbots requires coding skills. Businesses need
+      a no-code solution that's powerful yet easy to use.
+    
+    moat_hypothesis:
+      - Template marketplace creates network effects
+      - Multi-tenant infrastructure is hard to replicate
+      - Workflow lock-in increases switching costs
+    
+    pricing:
+      model: saas
+      tiers:
+        - name: Starter
+          price: 29
+          bots: 1
+          messages: 1000
+        - name: Pro
+          price: 79
+          bots: 5
+          messages: 10000
+        - name: Enterprise
+          price: custom
+    
+    tech_stack:
+      frontend: Next.js 15
+      backend: Firebase Functions
+      database: Firestore
+      ai: LangChain, OpenAI
+    
+    features:
+      - Visual bot builder
+      - Template marketplace
+      - Multi-channel deploy
+      - Analytics dashboard
+      - Team collaboration
+
+  # ============================================================
+  # SMARTRAPIDTRIAGE
+  # ============================================================
+  - id: smartrapidtriage
+    name: SmartRapidTriage
+    domain: rapidtriage.me
+    tagline: "AI-Powered Rapid Triage"
+    
+    description: |
+      AI triage platform for IT, software, healthcare, and emergency
+      prioritization with intelligent routing and recommendations.
+    
+    ideal_customer:
+      - IT support teams
+      - Healthcare providers
+      - Emergency services
+      - Software development teams
+    
+    problem_statement: |
+      Triage is manual, slow, and inconsistent. Teams need AI-powered
+      prioritization that learns and improves over time.
+    
+    moat_hypothesis:
+      - Domain-specific training data
+      - Workflow integration lock-in
+      - Continuous learning improves accuracy
+    
+    pricing:
+      model: per_seat
+      tiers:
+        - name: Team
+          price: 15
+          period: monthly
+          per: user
+        - name: Enterprise
+          price: custom
+    
+    tech_stack:
+      frontend: Next.js 15
+      backend: Firebase Functions
+      database: Firestore
+      ai: LangChain, Custom models
+      browser: Playwright
+    
+    use_cases:
+      - IT ticket triage
+      - Bug prioritization
+      - Symptom assessment
+      - Emergency routing

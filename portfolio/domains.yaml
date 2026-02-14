@@ -1,0 +1,149 @@
+# ============================================================
+# YARLIS PORTFOLIO - DOMAIN REGISTRY
+# ============================================================
+# This file tracks all domains in the Yarlis ecosystem
+# Update when adding new domains or changing status
+# ============================================================
+
+version: "1.0"
+updated: "2026-02-14"
+owner: "SamJr"
+
+domains:
+  # ============================================================
+  # PARENT COMPANY
+  # ============================================================
+  - domain: yarlis.com
+    product: Yarlis Core
+    description: Parent holding company, brand, enterprise AI services
+    repo: https://github.com/siri1410/yarlis-platform
+    status: build
+    category: platform
+    monetization: subscription
+    moat: brand, distribution, customer_data
+    stack:
+      - Next.js 15
+      - Firebase
+      - Stripe
+    links:
+      production: https://yarlis.com
+      staging: https://yarlis-platform.web.app
+      docs: https://docs.yarlis.com
+
+  # ============================================================
+  # AI PLATFORM
+  # ============================================================
+  - domain: yarlis.ai
+    product: Yarlis AI
+    description: AI-first SaaS layer, agentic systems, model abstraction
+    repo: https://github.com/siri1410/yarlis-platform
+    status: beta
+    category: ai
+    monetization: enterprise
+    moat: workflows, integrations, agent_orchestration
+    stack:
+      - Next.js 15
+      - LangChain
+      - Firebase
+      - Cloud Run
+    links:
+      production: https://yarlis.ai
+      staging: https://yarlis-ai-staging.web.app
+      docs: https://docs.yarlis.ai
+
+  # ============================================================
+  # NO-CODE CHATBOT BUILDER
+  # ============================================================
+  - domain: mybotbox.com
+    product: MyBotBox
+    description: No-code AI chatbot builder, multi-tenant SaaS
+    repo: https://github.com/siri1410/ystudio
+    status: beta
+    category: product
+    monetization: saas
+    moat: templates, multi_tenant, workflow_lockin
+    stack:
+      - Next.js 15
+      - Firebase
+      - LangChain
+      - n8n-style engine
+    links:
+      production: https://mybotbox.com
+      staging: https://mybotbox-staging.web.app
+      pricing: https://mybotbox.com/pricing
+
+  # ============================================================
+  # DEVELOPER FRAMEWORK
+  # ============================================================
+  - domain: sdods.com
+    product: SDODS
+    description: Developer framework ecosystem, reusable OSS components
+    repo: https://github.com/siri1410/sdods
+    status: build
+    category: platform
+    monetization: open_core
+    moat: ecosystem_gravity, developer_community
+    stack:
+      - TypeScript
+      - React
+      - NestJS
+    modules:
+      - "@sdods/auth"
+      - "@sdods/rbac"
+      - "@sdods/ui"
+      - "@sdods/observability"
+      - "@sdods/billing"
+    links:
+      production: https://sdods.com
+      npm: https://npmjs.com/org/sdods
+      github: https://github.com/sdods
+
+  # ============================================================
+  # IDEA-TO-DEPLOYMENT ENGINE
+  # ============================================================
+  - domain: yarlis.io
+    product: Yarlis IO
+    description: Workspace-driven rapid app builder (like Manus.ai)
+    repo: https://github.com/siri1410/yarlis-platform
+    status: idea
+    category: product
+    monetization: usage_based
+    moat: speed, platform_primitives
+    stack:
+      - Next.js 15
+      - AI Code Generation
+      - Playwright
+      - Cloud Run
+    features:
+      - Natural language → App scaffolding
+      - Template library
+      - One-click deploy
+      - Browser automation
+    links:
+      production: https://yarlis.io
+
+  # ============================================================
+  # AI TRIAGE PLATFORM
+  # ============================================================
+  - domain: rapidtriage.me
+    product: SmartRapidTriage
+    description: IT/Software/Healthcare AI triage and prioritization
+    repo: https://github.com/siri1410/smartrapidtriage
+    status: beta
+    category: healthcare
+    monetization: per_seat
+    moat: workflow_lockin, data_flywheel
+    stack:
+      - Next.js 15
+      - Firebase
+      - LangChain
+      - Playwright
+    use_cases:
+      - IT ticket triage
+      - Software bug prioritization
+      - Healthcare symptom assessment
+      - Emergency response routing
+    links:
+      production: https://rapidtriage.me
+      staging: https://rapidtriage-me.web.app
+      chrome_extension: TBD
