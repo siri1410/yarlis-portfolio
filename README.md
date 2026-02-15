@@ -15,7 +15,7 @@
 |--------|---------|------|--------|----------|--------------|
 | [yarlis.com](https://yarlis.com) | Yarlis Core | [yarlis-platform](https://github.com/siri1410/yarlis-platform) | 🟡 Build | Platform | Subscription |
 | [yarlis.ai](https://yarlis.ai) | Yarlis AI | [yarlis-platform](https://github.com/siri1410/yarlis-platform) | 🟢 Beta | AI | Enterprise |
-| [mybotbox.com](https://mybotbox.com) | MyBotBox | [ystudio](https://github.com/siri1410/ystudio) | 🟢 Beta | Product | SaaS |
+| [mybotbox.com](https://mybotbox.com) | MyBotBox | [mybotbox-platform](https://github.com/siri1410/mybotbox-platform) | 🟢 Beta | Product | SaaS |
 | [sdods.com](https://sdods.com) | SDODS | [sdods](https://github.com/siri1410/sdods) | 🟡 Build | Platform | Open Core |
 | [yarlis.io](https://yarlis.io) | Yarlis IO | [yarlis-platform](https://github.com/siri1410/yarlis-platform) | 🔴 Idea | Product | Usage-based |
 | [rapidtriage.me](https://rapidtriage.me) | SmartRapidTriage | [smartrapidtriage](https://github.com/siri1410/smartrapidtriage) | 🟢 Beta | Healthcare | Per-seat |
@@ -148,7 +148,7 @@ yarlis-portfolio/
 
 ### Repositories
 - [yarlis-platform](https://github.com/siri1410/yarlis-platform) — Main monorepo
-- [ystudio](https://github.com/siri1410/ystudio) — MyBotBox
+- [mybotbox-platform](https://github.com/siri1410/mybotbox-platform) — MyBotBox
 - [smartrapidtriage](https://github.com/siri1410/smartrapidtriage) — RapidTriage
 - [uip](https://github.com/siri1410/uip) — Unified Identity Platform
 

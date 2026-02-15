@@ -226,3 +226,11 @@ npm run test:e2e
 ---
 
 *Maintained by: Dolly 🎀 | Approved by: SamJr 🦊*
+
+## Yarlis Platform Test User
+- **Email:** testuser@testuser.com
+- **Password:** testuser@testuser.com
+- **Firebase Project:** yarlis-platform
+- **Test URLs:** yarlis-ai-staging.web.app, staging.yarlis.ai
+- **Added:** 2026-02-14
+
