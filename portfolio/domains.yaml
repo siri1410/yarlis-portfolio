@@ -109,7 +109,7 @@ quick_access:
       url: https://github.com/siri1410/yarlis-platform
       description: Monorepo for yarlis.com, yarlis.ai, yarlis.io
     - name: ystudio (MyBotBox)
-      url: https://github.com/siri1410/ystudio
+      url: https://github.com/siri1410/mybotbox-platform
       description: MyBotBox chatbot builder
     - name: smartrapidtriage
       url: https://github.com/siri1410/smartrapidtriage
@@ -119,7 +119,7 @@ quick_access:
       description: Open-source component library
     - name: yarlis-portfolio
       url: https://github.com/siri1410/yarlis-portfolio
-      description: This portfolio index
+      description: This is my portfolio index
 
 # ============================================================
 # TECH STACK OVERVIEW
