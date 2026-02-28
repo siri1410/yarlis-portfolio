@@ -1,20 +1,28 @@
 # Yarlis Testing Gates Standard
 
-> **Applies to:** All Yarlis ecosystem projects (MyBotBox, SmartRapidTriage, SDODS, Yarlis Platform, Mission Control)
+> **Applies to:** All Yarlis ecosystem projects
 > **Owner:** Siri Y. | **Last Updated:** 2026-02-28
 
 ---
 
-## 3-Layer Test Gate Strategy
+## Branch → Environment → Deploy Strategy
 
-Every project MUST implement these gates before going to production. No exceptions.
+| Branch | Environment | Test Target | Deploy Method |
+|---|---|---|---|
+| `develop` | Local | `localhost` | None (dev only) |
+| `main` | Staging | `staging-app.{domain}` | GitHub Actions → Cloud Run |
+| Production tag/release | Production | `{domain}` | **Jenkins Pipeline** |
 
-| Layer | Trigger | Tests | Time | Blocks? |
-|---|---|---|---|---|
-| **Pre-push hook** | `git push` to main/develop | Auth + Nav (smoke) | ~2 min | ✅ Yes (skip: `--no-verify`) |
-| **GitHub Actions — PR** | Any PR to main | Smoke suite | ~2 min | ✅ Yes |
-| **GitHub Actions — Push** | Merge to main | Full Chromium | ~8 min | ✅ Yes |
-| **GitHub Actions — Manual** | Dispatch `full` | All 3 browsers | ~20 min | Optional |
+---
+
+## 4-Layer Test Gate Strategy
+
+| Layer | Trigger | Tests | Target | Time | Blocks? |
+|---|---|---|---|---|---|
+| **Pre-push hook** | `git push` to main/develop | Smoke (auth + nav) | staging / localhost | ~2 min | ✅ Yes (skip: `--no-verify`) |
+| **GitHub Actions — PR** | PR to main | Smoke suite | staging | ~2 min | ✅ Yes |
+| **GitHub Actions — Merge to main** | Push to main | Fast (full Chromium) | staging | ~8 min | ✅ Yes |
+| **Jenkins — Production** | Release/deploy trigger | Full (all browsers) | production domain | ~20 min | ✅ Yes |
 
 ---
 
@@ -28,7 +36,7 @@ mkdir -p .githooks
 git config core.hooksPath .githooks
 ```
 
-### Template: `.githooks/pre-push`
+### `.githooks/pre-push`
 ```bash
 #!/bin/bash
 # Yarlis Pre-Push Gate — skip with: git push --no-verify
@@ -41,11 +49,13 @@ if [[ "$BRANCH" != "main" && "$BRANCH" != "develop" ]]; then
 fi
 
 echo "🔍 Pre-push smoke test on $BRANCH..."
-echo "   (skip: git push --no-verify)"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
 cd "$(git rev-parse --show-toplevel)"
-./scripts/e2e-smoke.sh staging
+
+if [[ "$BRANCH" == "main" ]]; then
+  ./scripts/e2e-smoke.sh staging
+elif [[ "$BRANCH" == "develop" ]]; then
+  ./scripts/e2e-smoke.sh local
+fi
 
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
@@ -57,23 +67,22 @@ exit 0
 ```
 
 ### Rules
-- Runs **auth + navigation** tests only (fastest critical paths)
-- Target: **staging** for main, **localhost** for develop
-- Must complete in **< 3 minutes** or developers will skip it
-- `--no-verify` escape hatch exists but should be rare
+- `main` → tests against **staging**
+- `develop` → tests against **localhost** (must have dev server running)
+- Must complete in **< 3 minutes**
+- `--no-verify` escape hatch — CI still catches it
 
 ---
 
-## Layer 2: GitHub Actions — PR Gate (CI)
+## Layer 2: GitHub Actions — PR to Main (CI)
 
-**Purpose:** Prevent broken PRs from merging. Visible to reviewers.
+**Purpose:** Gate PRs before merge to main (staging).
 
-### Template
 ```yaml
 name: E2E Smoke
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 concurrency:
   group: e2e-smoke-${{ github.ref }}
   cancel-in-progress: true
@@ -93,28 +102,22 @@ jobs:
         with: { name: smoke-failures, path: '**/test-results/', retention-days: 7 }
 ```
 
-### Rules
-- **Required check** — PR cannot merge if smoke fails
-- Chromium only, 2 workers
-- Upload failure artifacts for debugging
-
 ---
 
-## Layer 3: GitHub Actions — Push Gate (CD)
+## Layer 3: GitHub Actions — Merge to Main (Staging Deploy)
 
-**Purpose:** Full validation after merge, before deploy triggers.
+**Purpose:** Full Chromium validation after merge. Gates staging deployment.
 
-### Template
 ```yaml
-name: E2E Fast
+name: E2E Fast + Staging Deploy
 on:
   push:
     branches: [main]
 concurrency:
-  group: e2e-fast-main
-  cancel-in-progress: true
+  group: staging-deploy
+  cancel-in-progress: false
 jobs:
-  fast:
+  test:
     name: ⚡ Fast Tests (Chromium)
     runs-on: ubuntu-latest
     steps:
@@ -132,75 +135,176 @@ jobs:
             **/test-results/screenshots/
             **/playwright-report/
           retention-days: 14
-```
 
-### Rules
-- Full suite, Chromium only
-- Screenshots uploaded every run (visual regression)
-- Must pass before deploy workflow triggers
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # PROJECT-SPECIFIC: Cloud Build submit or gcloud run deploy
+      - uses: actions/checkout@v4
+      - name: Deploy to Cloud Run (staging)
+        run: echo "Deploy staging here"
+```
 
 ---
 
-## Layer 4: Full Browser Matrix (Manual / Release)
+## Layer 4: Jenkins — Production Deploy
 
-**Purpose:** Cross-browser validation before releases.
+**Purpose:** Full cross-browser validation before production release. Deployed via Jenkins.
 
-```yaml
-name: E2E Full
-on:
-  workflow_dispatch:
-    inputs:
-      target: { description: 'Target URL', default: 'https://staging-app.mybotbox.com' }
-jobs:
-  full:
-    name: 🔬 Full (${{ matrix.browser }})
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chromium, firefox, webkit]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'npm' }
-      - run: npm ci
-      - run: npx playwright install --with-deps
-      - run: npx playwright test --project=${{ matrix.browser }} --reporter=line --workers=2
-        env:
-          PLAYWRIGHT_BASE_URL: ${{ inputs.target }}
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with: { name: full-${{ matrix.browser }}, path: '**/test-results/', retention-days: 30 }
+### Jenkinsfile Template
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        PLAYWRIGHT_BASE_URL = "https://${env.DOMAIN}"
+        NODE_VERSION = '20'
+    }
+
+    parameters {
+        string(name: 'DOMAIN', defaultValue: 'mybotbox.com', description: 'Production domain')
+        string(name: 'IMAGE_TAG', description: 'Docker image tag to deploy')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip E2E (emergency only)')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install') {
+            steps {
+                sh 'npm ci'
+                sh 'npx playwright install --with-deps'
+            }
+        }
+
+        stage('E2E Full - All Browsers') {
+            when { expression { !params.SKIP_TESTS } }
+            parallel {
+                stage('Chromium') {
+                    steps {
+                        sh './scripts/e2e-full.sh prod --project=chromium'
+                    }
+                }
+                stage('Firefox') {
+                    steps {
+                        sh './scripts/e2e-full.sh prod --project=firefox'
+                    }
+                }
+                stage('WebKit') {
+                    steps {
+                        sh './scripts/e2e-full.sh prod --project=webkit'
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/test-results/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: '**/playwright-report/**', allowEmptyArchive: true
+                }
+                failure {
+                    error('❌ E2E tests failed. Production deploy aborted.')
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                // PROJECT-SPECIFIC: Replace with your deploy command
+                sh """
+                    gcloud run deploy \${SERVICE_NAME} \\
+                        --image=\${IMAGE} \\
+                        --region=us-central1 \\
+                        --project=\${GCP_PROJECT} \\
+                        --platform=managed \\
+                        --allow-unauthenticated
+                """
+            }
+        }
+
+        stage('Post-Deploy Smoke') {
+            steps {
+                sh './scripts/e2e-smoke.sh prod'
+            }
+            post {
+                failure {
+                    // Rollback if post-deploy smoke fails
+                    sh 'echo "🔴 Post-deploy smoke failed — trigger rollback"'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            publishHTML(target: [
+                reportDir: 'playwright-report',
+                reportFiles: 'index.html',
+                reportName: 'E2E Report'
+            ])
+        }
+        failure {
+            // Notify on failure
+            sh 'echo "❌ Production pipeline failed"'
+        }
+        success {
+            sh 'echo "✅ Production deploy complete"'
+        }
+    }
+}
 ```
 
-### Rules
-- **Manual trigger only** — don't burn CI on every push
-- Run before every **production deploy** and **release tag**
+### Jenkins Pipeline Rules
+- **Full browser matrix** (Chromium + Firefox + WebKit) runs in **parallel stages**
+- Tests run against **production domain** before deploy
+- **Post-deploy smoke** validates the live deployment
+- `SKIP_TESTS` parameter for **emergencies only** (requires approval)
+- Artifacts archived for every run
+- HTML report published to Jenkins dashboard
+- **Rollback trigger** if post-deploy smoke fails
+
+---
+
+## Flow Diagram
+
+```
+develop (local dev)
+    │
+    ├── git push → pre-push hook (smoke vs localhost) → push allowed
+    │
+    └── PR to main → GitHub Actions smoke (vs staging) → merge allowed
+                          │
+                          ▼
+                    main (staging)
+                          │
+                          ├── GitHub Actions fast (vs staging) → staging deploy (Cloud Run)
+                          │
+                          └── Release trigger
+                                  │
+                                  ▼
+                          Jenkins pipeline
+                                  │
+                                  ├── E2E full (Chromium ║ Firefox ║ WebKit) vs production
+                                  ├── Deploy to production (Cloud Run)
+                                  └── Post-deploy smoke vs production
+```
 
 ---
 
 ## Required Scripts
 
-Every project must have these in `scripts/`:
+Every project must have in `scripts/`:
 
 | Script | Purpose | Max Time |
 |---|---|---|
 | `e2e-smoke.sh [staging\|prod\|local]` | Critical paths only | 3 min |
-| `e2e-fast.sh [staging\|prod\|local]` | Full suite, primary browser | 10 min |
+| `e2e-fast.sh [staging\|prod\|local]` | Full suite, Chromium | 10 min |
 | `e2e-full.sh [staging\|prod\|local]` | All browsers | 25 min |
-
-### Script Template
-```bash
-#!/bin/bash
-set -e
-ENV="${1:-staging}"
-case "$ENV" in
-  staging) export PLAYWRIGHT_BASE_URL="https://staging-app.YOURDOMAIN.com" ;;
-  prod)    export PLAYWRIGHT_BASE_URL="https://YOURDOMAIN.com" ;;
-  local)   unset PLAYWRIGHT_BASE_URL ;;
-esac
-echo "🚀 E2E [$0] against: ${PLAYWRIGHT_BASE_URL:-localhost}"
-npx playwright test --config=YOUR_CONFIG --project=chromium --reporter=line --workers=4 $TEST_FILES
-```
 
 ---
 
@@ -208,10 +312,9 @@ npx playwright test --config=YOUR_CONFIG --project=chromium --reporter=line --wo
 
 ```typescript
 {
-  fullyParallel: true,                         // Parallel within files
-  workers: process.env.CI ? 2 : 4,             // 2 in CI (2 vCPU), 4 local
-  retries: process.env.CI ? 2 : 0,             // Retry in CI only
-  reporter: [['html'], ['list']],
+  fullyParallel: true,
+  workers: process.env.CI ? 2 : 4,
+  retries: process.env.CI ? 2 : 0,
   use: {
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -226,9 +329,9 @@ npx playwright test --config=YOUR_CONFIG --project=chromium --reporter=line --wo
 
 ## Per-Project Status
 
-| Project | Pre-push | PR Gate | Push Gate | Full Gate | Scripts |
+| Project | Pre-push | PR Gate | Staging (GHA) | Prod (Jenkins) | Scripts |
 |---|---|---|---|---|---|
-| **MyBotBox** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **MyBotBox** | ✅ | ✅ | ✅ | ❌ TODO | ✅ |
 | **SmartRapidTriage** | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO |
 | **SDODS** | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO |
 | **Yarlis Platform** | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO | ❌ TODO |
@@ -238,15 +341,14 @@ npx playwright test --config=YOUR_CONFIG --project=chromium --reporter=line --wo
 
 ## Learnings
 
-1. **Firefox auth is slower** — set timeout to 60s for `waitForURL` after Firebase auth redirects
-2. **`fullyParallel: true`** cuts runtime 40-60% vs sequential
-3. **`PLAYWRIGHT_BASE_URL`** (not `BASE_URL`) is the correct env var for Playwright config
-4. **Starter overlays intercept clicks** — use `force: true` or dismiss first
-5. **CI workers = 2** — GitHub runners have 2 vCPU, more workers thrash
-6. **Upload artifacts always** — screenshots are your debug lifeline
-7. **`--no-verify` is tracked** — if you skip hooks, CI still catches it
-8. **Smoke must stay under 3 min** — anything longer and devs skip it every time
-9. **Sub-agents for test runs** — don't burn main session context polling test output
+1. **Firefox auth is slower** — 60s timeout for `waitForURL` after Firebase redirects
+2. **`fullyParallel: true`** cuts runtime 40-60%
+3. **`PLAYWRIGHT_BASE_URL`** (not `BASE_URL`) is the correct env var
+4. **CI workers = 2** — GitHub runners have 2 vCPU, more workers thrash
+5. **Jenkins parallel stages** — run browsers concurrently, not sequentially
+6. **Post-deploy smoke is mandatory** — catches deploy-specific issues (env vars, secrets, DNS)
+7. **Smoke must stay under 3 min** — anything longer and devs skip it
+8. **Sub-agents for test runs** — don't burn main session context polling
 
 ---
 
