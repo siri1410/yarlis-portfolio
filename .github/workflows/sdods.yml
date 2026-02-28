@@ -1,0 +1,20 @@
+name: "@sdods/* packages [YAR-SDO]"
+on:
+  push:
+    branches: [main]
+    paths: ['packages/**']
+
+jobs:
+  pipeline:
+    uses: siri1410/yarlis-portfolio/.github/workflows/_pipeline.yml@main
+    with:
+      yar_id: "YAR-SDO-PROD"
+      domain: sdo
+      app_type: npm-library
+      project_id: yarlis-platform
+      run_e2e: false
+      deploy_staging: false
+      deploy_prod: false
+    secrets:
+      WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+      WIF_SA: ${{ secrets.GCP_WIF_SA_SDO }}

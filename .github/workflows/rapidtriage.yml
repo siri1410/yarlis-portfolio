@@ -1,9 +1,4 @@
-# ============================================================
-# rapidtriage.me — CI/CD Pipeline
-# Calls the reusable Yarlis pipeline
-# ============================================================
-
-name: RapidTriageME
+name: RapidTriageME [YAR-RTM]
 on:
   push:
     branches: [main]
@@ -14,7 +9,9 @@ jobs:
   pipeline:
     uses: siri1410/yarlis-portfolio/.github/workflows/_pipeline.yml@main
     with:
+      yar_id: "YAR-RTM-PROD"
       domain: rtm
+      app_type: firebase-hosting
       project_id: rapidtriage-me
       node_version: "20"
       run_e2e: true

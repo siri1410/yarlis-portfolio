@@ -1,0 +1,289 @@
+# ============================================================
+# YARLIS APP REGISTRY (YAR)
+# Single source of truth for all apps in the ecosystem
+#
+# Each app entry generates:
+#   - Unique hash: sha256(domain + env + app_type + name)[0:12]
+#   - YPID prefix: ypid_<domain_code>_<env>
+#   - Vault secret path: ypid_<code>_<env>_<secret>
+#   - CI/CD template: determined by app_type
+#   - @sdods integrations: declared per-app, auto-wired
+# ============================================================
+
+version: "2.0"
+schema: yarlis-app-registry/v2
+generated_by: DEEJR
+last_updated: "2026-02-28"
+
+# ── App Type Templates ───────────────────────────────────────
+# Each type maps to a strict ordered CI/CD pipeline
+app_types:
+  firebase-hosting:
+    description: Firebase Hosting + Functions (TypeScript)
+    ci_steps: [install, typecheck, lint, build, unit-test, e2e-api, e2e-ui, deploy-staging, e2e-staging, deploy-prod]
+    sdods_recommended: [core, auth, ui, themes, observability]
+    required_secrets: [firebase-token, anthropic-api-key]
+    optional_secrets: [stripe-secret-key, stripe-webhook-secret]
+
+  npm-library:
+    description: Published npm package (@sdods/*, @yarlisai/*)
+    ci_steps: [install, typecheck, lint, build, unit-test, publish-dry-run, publish]
+    sdods_recommended: [core]
+    required_secrets: [npm-token]
+    optional_secrets: []
+
+  cloud-run:
+    description: GCP Cloud Run service (containerized)
+    ci_steps: [install, typecheck, lint, build, unit-test, docker-build, deploy-staging, e2e-staging, deploy-prod]
+    sdods_recommended: [core, auth, observability, comms]
+    required_secrets: [gcp-sa-key, docker-registry-token]
+    optional_secrets: [anthropic-api-key, stripe-secret-key]
+
+  nextjs-vercel:
+    description: Next.js app on Vercel
+    ci_steps: [install, typecheck, lint, build, unit-test, e2e-ui, deploy-preview, deploy-prod]
+    sdods_recommended: [core, ui, auth, themes, observability]
+    required_secrets: [vercel-token, vercel-org-id, vercel-project-id]
+    optional_secrets: [stripe-secret-key]
+
+  chrome-extension:
+    description: Chrome Extension (MV3)
+    ci_steps: [install, typecheck, lint, build, package, upload-to-webstore]
+    sdods_recommended: [core]
+    required_secrets: [chrome-webstore-token]
+    optional_secrets: []
+
+# ── Apps ────────────────────────────────────────────────────
+apps:
+
+  # ── rapidtriage.me ────────────────────────────────────────
+  - name: RapidTriageME
+    code: rtm
+    domain: rapidtriage.me
+    domain_code: rtm
+    app_type: firebase-hosting
+    template: firebase-fullstack-v1
+    repo: siri1410/smartrapidtriage
+    gcp_project: rapidtriage-me
+
+    sdods_integrations:
+      - package: "@sdods/auth"
+        usage: Firebase Auth abstraction (email/password + Google + GitHub SSO)
+        wired: false  # TODO: replace ad-hoc auth
+      - package: "@sdods/observability"
+        usage: OpenTelemetry tracing on Cloud Functions
+        wired: false
+      - package: "@sdods/comms"
+        usage: Email notifications (incident alerts, onboarding)
+        wired: false
+      - package: "@sdods/payments"
+        usage: Stripe per-seat billing
+        wired: false
+      - package: "@sdods/themes"
+        usage: Brand tokens (--primary: #316FA7 already in CSS, needs token system)
+        wired: false
+
+    yarlisai_integrations:
+      - package: "@yarlisai/sdk"
+        usage: AI triage analysis (multi-model routing via router)
+        wired: false
+      - package: "@yarlisai/memory"
+        usage: Per-session triage context memory
+        wired: false
+
+    environments:
+      prod:
+        url: https://rapidtriage.me
+        firebase_project: rapidtriage-me
+        vault_prefix: ypid_rtm_prod
+        gcp_sa: github-actions-rtm@yarlis-platform.iam.gserviceaccount.com
+        secrets:
+          - ypid_rtm_prod_firebase-token
+          - ypid_rtm_prod_anthropic-api-key
+          - ypid_rtm_prod_stripe-secret-key
+          - ypid_rtm_prod_rapidtriage-api-token
+          - ypid_all_prod_npm-token
+          - ypid_all_prod_cloudflare-token
+      staging:
+        url: https://rapidtriage-me--staging-hb55sy3z.web.app
+        firebase_project: rapidtriage-me
+        vault_prefix: ypid_rtm_staging
+        secrets:
+          - ypid_rtm_staging_firebase-token
+          - ypid_rtm_staging_stripe-secret-key
+      dev:
+        url: http://localhost:5050
+        vault_prefix: ypid_rtm_dev
+        secrets: []  # uses functions/.env.local
+
+    ci_overrides:
+      e2e_base_url_prod: https://rapidtriage.me
+      e2e_base_url_staging: https://rapidtriage-me--staging-hb55sy3z.web.app
+      node_version: "20"
+      deploy_requires_approval: true
+      notify_telegram: true
+
+  # ── @rapidtriageme/mcp ────────────────────────────────────
+  - name: RapidTriageME MCP
+    code: rtm-mcp
+    domain: rapidtriage.me
+    domain_code: rtm
+    app_type: npm-library
+    template: npm-publish-v1
+    repo: siri1410/smartrapidtriage
+    path: rapidtriage-mcp/
+    npm_scope: "@rapidtriageme"
+    npm_package: "@rapidtriageme/mcp"
+
+    sdods_integrations: []
+    yarlisai_integrations: []
+
+    environments:
+      prod:
+        vault_prefix: ypid_rtm_prod
+        secrets:
+          - ypid_all_prod_npm-token
+
+  # ── mybotbox.com ──────────────────────────────────────────
+  - name: MyBotBox
+    code: mbx
+    domain: mybotbox.com
+    domain_code: mbx
+    app_type: firebase-hosting
+    template: firebase-fullstack-v1
+    repo: siri1410/mybotbox
+    gcp_project: mybotbox-prod
+
+    sdods_integrations:
+      - package: "@sdods/auth"
+        usage: Replace ad-hoc auth with yarlis.com UIP via @sdods/auth
+        wired: false
+      - package: "@sdods/ui"
+        usage: Onboarding flow components (upgrade from custom)
+        wired: false
+      - package: "@sdods/payments"
+        usage: Stripe checkout + subscription management
+        wired: false
+      - package: "@sdods/comms"
+        usage: Onboarding emails + chat notifications
+        wired: false
+      - package: "@sdods/themes"
+        usage: Brand token system
+        wired: false
+
+    yarlisai_integrations:
+      - package: "@yarlisai/router"
+        usage: Multi-model routing for chatbot responses
+        wired: false
+
+    environments:
+      prod:
+        url: https://mybotbox.com
+        firebase_project: mybotbox-prod
+        vault_prefix: ypid_mbx_prod
+        gcp_sa: github-actions-mbx@yarlis-platform.iam.gserviceaccount.com
+        secrets:
+          - ypid_mbx_prod_firebase-token
+          - ypid_mbx_prod_stripe-secret-key
+          - ypid_mbx_prod_openai-api-key
+          - ypid_all_prod_npm-token
+      staging:
+        vault_prefix: ypid_mbx_staging
+        secrets:
+          - ypid_mbx_staging_firebase-token
+
+  # ── @sdods/* ─────────────────────────────────────────────
+  - name: sdods Library Suite
+    code: sdo
+    domain: sdods.com
+    domain_code: sdo
+    app_type: npm-library
+    template: npm-monorepo-v1
+    repo: siri1410/sdods
+    npm_scope: "@sdods"
+    packages:
+      - "@sdods/core"
+      - "@sdods/ui"
+      - "@sdods/auth"
+      - "@sdods/payments"
+      - "@sdods/comms"
+      - "@sdods/observability"
+      - "@sdods/themes"
+      - "@sdods/marketing"
+
+    sdods_integrations: []  # this IS @sdods
+
+    environments:
+      prod:
+        vault_prefix: ypid_sdo_prod
+        secrets:
+          - ypid_all_prod_npm-token
+
+  # ── @yarlisai/* ──────────────────────────────────────────
+  - name: YarlisAI SDK Suite
+    code: yai
+    domain: yarlis.ai
+    domain_code: yai
+    app_type: npm-library
+    template: npm-monorepo-v1
+    repo: siri1410/yarlisai
+    npm_scope: "@yarlisai"
+    packages:
+      - "@yarlisai/contracts"
+      - "@yarlisai/router"
+      - "@yarlisai/memory"
+      - "@yarlisai/sdk"
+
+    sdods_integrations:
+      - package: "@sdods/observability"
+        usage: Emit model routing telemetry + token cost tracing
+        wired: false
+      - package: "@sdods/comms"
+        usage: Agent completion notifications
+        wired: false
+
+    environments:
+      prod:
+        vault_prefix: ypid_yai_prod
+        secrets:
+          - ypid_all_prod_npm-token
+          - ypid_yai_prod_anthropic-api-key
+          - ypid_yai_prod_openai-api-key
+          - ypid_yai_prod_google-ai-key
+
+  # ── yarlis.com ────────────────────────────────────────────
+  - name: Yarlis Platform (UIP)
+    code: yrl
+    domain: yarlis.com
+    domain_code: yrl
+    app_type: cloud-run
+    template: cloud-run-node-v1
+    repo: siri1410/yarlis-platform
+    gcp_project: yarlis-platform
+
+    sdods_integrations:
+      - package: "@sdods/auth"
+        usage: This IS the auth platform — @sdods/auth wraps this
+        wired: true
+      - package: "@sdods/observability"
+        usage: Full audit log + RBAC event tracing
+        wired: false
+      - package: "@sdods/comms"
+        usage: Auth event notifications (login alerts, new user, etc.)
+        wired: false
+
+    yarlisai_integrations:
+      - package: "@yarlisai/contracts"
+        usage: YPID for all user/org/session entities
+        wired: false
+
+    environments:
+      prod:
+        url: https://yarlis.com
+        vault_prefix: ypid_yrl_prod
+        gcp_sa: github-actions-yrl@yarlis-platform.iam.gserviceaccount.com
+        secrets:
+          - ypid_yrl_prod_gcp-sa-key
+          - ypid_yrl_prod_jwt-secret
+          - ypid_yrl_prod_stripe-secret-key
+          - ypid_all_prod_cloudflare-token
