@@ -1,0 +1,50 @@
+/**
+ * Jenkinsfile — yarlis-platform (yarlis.com + yarlis.ai)
+ * Yarlis CI/CD | ci.yarlis.ai
+ */
+pipeline {
+  agent any
+  environment {
+    GCP_PROJECT     = 'yarlis-platform'
+    CF_TOKEN        = credentials('cloudflare-api-token')
+    NPM_TOKEN       = credentials('npm-token')
+  }
+  stages {
+    stage('Terraform Plan') {
+      steps {
+        dir('infra/terraform/environments/prod') {
+          sh 'terraform init && terraform plan -out=tfplan'
+        }
+      }
+    }
+    stage('Terraform Apply') {
+      when { branch 'main' }
+      input { message "Apply infrastructure changes?"; submitter "siri1410@gmail.com" }
+      steps {
+        dir('infra/terraform/environments/prod') {
+          sh 'terraform apply tfplan'
+        }
+      }
+    }
+    stage('Publish @sdods/*') {
+      when { changeset 'packages/sdods/**' }
+      steps {
+        sh '''
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm run build --workspaces
+          npm publish --workspaces --access public
+        '''
+      }
+    }
+    stage('Publish @yarlisai/*') {
+      when { changeset 'packages/yarlisai/**' }
+      steps {
+        sh '''
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm run build --workspaces
+          npm publish --workspaces --access public
+        '''
+      }
+    }
+  }
+}
