@@ -28,7 +28,8 @@ gcloud iam workload-identity-pools providers create-oidc $WIF_PROVIDER \
   --location=global \
   --workload-identity-pool=$WIF_POOL \
   --display-name="GitHub OIDC Provider" \
-  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.actor=assertion.actor" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner,attribute.ref=assertion.ref" \
+  --attribute-condition="assertion.repository_owner == '${GITHUB_ORG}'" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 
 POOL_ID=$(gcloud iam workload-identity-pools describe $WIF_POOL \
