@@ -1,5 +1,7 @@
 # 🤖 Yarlis.ai
 
+> 🎨 **Figma:** [yarlis.ai Design](https://www.figma.com/files/team/1541530489515876113/project/557500319)
+
 > **AI-Powered Development & Agent Orchestration**
 
 ---

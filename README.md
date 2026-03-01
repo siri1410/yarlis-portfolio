@@ -111,3 +111,17 @@ Secret format: `{domain}-{env}-{variable}` (e.g. `mybotbox-production-stripe-key
 ---
 
 _🔱 DEEJR — Never sleeps on goals. Updated: 2026-02-28_
+
+
+## 🎨 Design (Figma)
+
+| Domain | Figma Project | Files |
+|--------|--------------|-------|
+| yarlis.com | [yarlis.com](https://www.figma.com/files/team/1541530489515876113/project/541599622) | — |
+| mybotbox.com | [mybotbox.com](https://www.figma.com/files/team/1541530489515876113/project/541617289) | Manus Page Design |
+| yarlis.ai | [yarlis.ai](https://www.figma.com/files/team/1541530489515876113/project/557500319) | — |
+| yarlis.io | [yarlis.io](https://www.figma.com/files/team/1541530489515876113/project/557500171) | — |
+| rapidtriage.me | [rapidtriage.me](https://www.figma.com/files/team/1541530489515876113/project/557500720) | Product Architecture, User Journey, VS Code Extension |
+| sdods.com | [sdods.com](https://www.figma.com/files/team/1541530489515876113/project/557500879) | — |
+
+**Figma Team:** Sireesh Yarlagadda (Professional) • Team ID: `1541530489515876113`

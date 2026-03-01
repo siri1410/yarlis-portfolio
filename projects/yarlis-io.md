@@ -1,5 +1,7 @@
 # 🔧 Yarlis.io
 
+> 🎨 **Figma:** [yarlis.io Design](https://www.figma.com/files/team/1541530489515876113/project/557500171)
+
 > **Developer Tools & API Ecosystem**
 
 ---

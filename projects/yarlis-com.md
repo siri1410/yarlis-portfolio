@@ -1,5 +1,7 @@
 # 🏢 Yarlis.com
 
+> 🎨 **Figma:** [yarlis.com Design](https://www.figma.com/files/team/1541530489515876113/project/541599622)
+
 > **Core AI Automation Platform (Mothership)**
 
 ---

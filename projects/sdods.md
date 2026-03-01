@@ -1,5 +1,7 @@
 # 📚 SDODS
 
+> 🎨 **Figma:** [sdods.com Design](https://www.figma.com/files/team/1541530489515876113/project/557500879)
+
 > **Software Development & Operations Data Systems (Open Source Core)**
 
 ---

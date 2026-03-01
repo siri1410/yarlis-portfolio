@@ -1,5 +1,7 @@
 # 🏥 RapidTriageMe
 
+> 🎨 **Figma:** [rapidtriage.me Design](https://www.figma.com/files/team/1541530489515876113/project/557500720)
+
 > **Browser Automation & Debugging Platform**
 
 ---

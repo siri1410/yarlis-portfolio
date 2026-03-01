@@ -1,5 +1,7 @@
 # 📦 MyBotBox
 
+> 🎨 **Figma:** [mybotbox.com Design](https://www.figma.com/files/team/1541530489515876113/project/541617289)
+
 > **No-Code Workflow Automation Marketplace**
 
 ---
