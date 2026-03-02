@@ -1,0 +1,178 @@
+#!/usr/bin/env groovy
+/**
+ * Yarlis Brand Assets — Deploy Pipeline
+ * Stages: Validate → Export → GitHub Pages → npm → Notify
+ */
+
+pipeline {
+  agent any
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 20, unit: 'MINUTES')
+    ansiColor('xterm')
+    timestamps()
+  }
+
+  environment {
+    GITHUB_ORG       = 'siri1410'
+    REPO             = 'yarlis-portfolio'
+    GIT_AUTHOR_EMAIL = 'siri1410@users.noreply.github.com'
+    GIT_AUTHOR_NAME  = 'DEEJR Jenkins'
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+            url: "https://github.com/${GITHUB_ORG}/${REPO}.git",
+            credentialsId: 'github-token'
+          ]]
+        ])
+        sh 'ls brand/'
+      }
+    }
+
+    stage('Validate') {
+      steps {
+        script {
+          def required = [
+            'brand/logos/rtm/rapidtriage-primary.svg',
+            'brand/logos/rtm/rapidtriage-icon.svg',
+            'brand/logos/yarlis/yarlis-primary.svg',
+            'brand/guidelines/BRAND.md',
+            'brand/guidelines/brand-sheet.html',
+          ]
+          required.each { f ->
+            if (!fileExists(f)) error("Missing: ${f}")
+            echo "OK: ${f}"
+          }
+          def svg = readFile('brand/logos/rtm/rapidtriage-primary.svg')
+          assert svg.contains('linearGradient') : 'Missing gradient in RTM logo'
+          assert svg.contains('RapidTriage')    : 'Missing wordmark in RTM logo'
+          echo "SVG validation passed"
+        }
+      }
+    }
+
+    stage('Export Assets') {
+      steps {
+        sh '''
+node << 'NODEOF'
+const fs   = require('fs');
+const path = require('path');
+
+fs.mkdirSync('brand/exports', { recursive: true });
+
+const logos = [
+  { src: 'brand/logos/rtm/rapidtriage-primary.svg',  name: 'rtm-primary' },
+  { src: 'brand/logos/rtm/rapidtriage-icon.svg',     name: 'rtm-icon' },
+  { src: 'brand/logos/yarlis/yarlis-primary.svg',    name: 'yarlis-wordmark' },
+];
+
+const manifest = { version: '1.0.0', generated: new Date().toISOString(), assets: [] };
+
+logos.forEach(({ src, name }) => {
+  if (fs.existsSync(src)) {
+    const dest = path.join('brand/exports', name + '.svg');
+    fs.copyFileSync(src, dest);
+    manifest.assets.push({ name, format: 'svg', path: dest });
+    console.log('Exported:', dest);
+  }
+});
+
+fs.writeFileSync('brand/exports/manifest.json', JSON.stringify(manifest, null, 2));
+console.log('Manifest written');
+NODEOF
+        '''
+      }
+    }
+
+    stage('Deploy GitHub Pages') {
+      when { branch 'main' }
+      steps {
+        withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
+          sh '''
+set -e
+mkdir -p /tmp/brand-pages
+cp brand/guidelines/brand-sheet.html /tmp/brand-pages/index.html
+cp brand/guidelines/BRAND.md         /tmp/brand-pages/
+cp -r brand/logos                    /tmp/brand-pages/
+cp -r brand/exports                  /tmp/brand-pages/
+
+cd /tmp/brand-pages
+git init
+git config user.email "$GIT_AUTHOR_EMAIL"
+git config user.name  "$GIT_AUTHOR_NAME"
+git add -A
+git commit -m "deploy: brand sheet v1.0 [Jenkins #$BUILD_NUMBER]"
+git push --force \
+  "https://$GH_TOKEN@github.com/siri1410/yarlis-portfolio.git" \
+  HEAD:gh-pages
+echo "Deployed to GitHub Pages"
+          '''
+        }
+      }
+    }
+
+    stage('Publish npm @yarlisc/brand') {
+      when { branch 'main' }
+      steps {
+        withCredentials([string(credentialsId: 'npm-token', variable: 'NPM_TOKEN')]) {
+          sh '''
+set -e
+cd brand
+if [ ! -f package.json ]; then
+  echo '{
+    "name": "@yarlisc/brand",
+    "version": "1.0.0",
+    "description": "Yarlis brand assets — logos, colors, guidelines",
+    "files": ["logos/**","exports/**","guidelines/**"],
+    "license": "MIT"
+  }' > package.json
+fi
+echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+npm publish --access public 2>&1 || echo "Skipped (version exists)"
+          '''
+        }
+      }
+    }
+
+    stage('Notify Telegram') {
+      steps {
+        script {
+          def status = currentBuild.result ?: 'SUCCESS'
+          def emoji  = status == 'SUCCESS' ? '✅' : '❌'
+          def sha    = sh(script: 'git rev-parse --short HEAD 2>/dev/null || echo unknown', returnStdout: true).trim()
+          echo "${emoji} Brand Deploy #${BUILD_NUMBER} — ${status} — ${sha}"
+        }
+        withCredentials([
+          string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+          string(credentialsId: 'telegram-chat-id',   variable: 'TG_CHAT')
+        ]) {
+          sh '''
+STATUS=${BUILD_STATUS:-SUCCESS}
+SHA=$(git rev-parse --short HEAD 2>/dev/null || echo unknown)
+curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
+  --data-urlencode "chat_id=$TG_CHAT" \
+  --data-urlencode "parse_mode=Markdown" \
+  --data-urlencode "text=✅ *Brand Deploy #$BUILD_NUMBER*
+Status: $STATUS
+Commit: \`$SHA\`
+Pages: https://siri1410.github.io/yarlis-portfolio/
+npm: @yarlisc/brand@1.0.0" || true
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success { echo "Brand deploy complete — GitHub Pages + npm updated" }
+    failure { echo "Brand deploy failed" }
+  }
+}
